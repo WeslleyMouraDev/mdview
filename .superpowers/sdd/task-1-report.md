@@ -1,18 +1,21 @@
-# Task 1 Report: Project Scaffolding & Design System
+# Task 1 Report: High Contrast Design System Tokens & useContrast Hook
 
 ## Summary
-- **Status:** DONE
-- **Commits Created:** `ab9fe80` (`feat: project scaffolding with design system and layout`)
-- **Verification Summary:** `npm run build` completed successfully without any errors or warnings.
+Successfully created the `useContrast` custom hook and integrated high contrast pastel color tokens into global CSS and MarkdownViewer component styles.
 
-## Steps Executed
-1. Initialized Next.js project using `create-next-app` with App Router, JavaScript, CSS Modules (`--no-tailwind`), and `src/` directory layout.
-2. Installed dependencies: `react-markdown`, `remark-gfm`, `rehype-highlight`, `dexie`, `highlight.js`.
-3. Created `src/app/globals.css` with color tokens for Light/Dark mode, reset, custom scrollbars, print styles, and typography variables.
-4. Configured `src/app/layout.js` with Google Fonts (`Inter` and `JetBrains Mono`) passed via CSS variables (`--font-inter`, `--font-mono`) and configured metadata.
-5. Created minimal `src/app/page.js` and `src/app/page.module.css` placeholders for sidebar and main content layout.
-6. Verified build with `npm run build` (successful compilation and static page generation).
-7. Committed all changes to git repository.
+## Changes Made
+1. **Created `src/hooks/useContrast.js`**:
+   - Manages state `'normal'` | `'high'`.
+   - Persists state in `localStorage` (`mdview-contrast`).
+   - Syncs `data-contrast` attribute on `document.documentElement`.
+2. **Updated `src/app/globals.css`**:
+   - Added `[data-contrast="high"]` CSS custom property tokens for pastel accents in light mode (`--h1-color`, `--h2-color`, `--h3-color`, `--link-color`, `--blockquote-bg`, `--blockquote-border`, `--code-bg`, `--border-color`, `--text-primary`).
+   - Added `[data-theme="dark"][data-contrast="high"]` combined selector overrides for dark mode pastel accents.
+3. **Updated `src/components/MainContent/MarkdownViewer.module.css`**:
+   - Bound `h1`, `h2`, `h3`, `a`, and `blockquote` colors to high-contrast design system CSS variables with appropriate fallbacks.
 
-## Concerns
-- None. Everything built cleanly and works as specified.
+## Verification
+- Ran `npm run build` — compiled successfully with Next.js 16 (Turbopack) in 3.1s, 0 errors, 4 static pages generated.
+
+## Commits
+- `624d254`: feat: high contrast mode hook and design system tokens

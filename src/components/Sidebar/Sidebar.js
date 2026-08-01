@@ -16,6 +16,8 @@ export default function Sidebar({
   onSortChange,
   theme,
   onToggleTheme,
+  contrast,
+  onToggleContrast,
 }) {
   return (
     <div className={styles.sidebar} data-hide-print="true">
@@ -39,6 +41,8 @@ export default function Sidebar({
       <SidebarFooter
         theme={theme}
         onToggleTheme={onToggleTheme}
+        contrast={contrast}
+        onToggleContrast={onToggleContrast}
         onClearAll={onClearAll}
         hasFiles={files.length > 0}
       />

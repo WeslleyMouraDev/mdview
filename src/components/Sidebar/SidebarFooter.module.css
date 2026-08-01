@@ -25,7 +25,13 @@
   background: rgba(224, 62, 62, 0.08);
 }
 
-.themeBtn {
+.toggles {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.iconBtn {
   background: none;
   border: none;
   color: var(--text-secondary);
@@ -36,9 +42,16 @@
   align-items: center;
   justify-content: center;
   transition: all var(--transition-fast);
+  min-width: 32px;
+  min-height: 32px;
 }
 
-.themeBtn:hover {
+.iconBtn:hover {
   background: var(--hover-bg);
   color: var(--text-primary);
+}
+
+.active {
+  color: var(--accent);
+  background: var(--accent-bg);
 }
