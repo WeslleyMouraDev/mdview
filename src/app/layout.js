@@ -16,6 +16,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata = {
   title: 'MDView — Visualizador de Markdown',
   description: 'Visualize seus arquivos Markdown de forma bonita e rápida. Arraste, visualize e exporte.',
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/favicon.ico',
+    apple: '/icon.png',
+  },
 };
 
 export default function RootLayout({ children }) {
