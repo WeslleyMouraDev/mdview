@@ -1,158 +1,100 @@
-### Task 2: Contrast Toggle Buttons in Sidebar & Header
+### Task 2: Integrate Mermaid in MarkdownViewer & Deploy
 
 **Files:**
-- Modify: `src/components/Sidebar/SidebarFooter.js`
-- Modify: `src/components/Sidebar/SidebarFooter.module.css`
-- Modify: `src/components/Sidebar/Sidebar.js`
+- Modify: `src/components/MainContent/MarkdownViewer.js`
 
 **Interfaces:**
-- Consumes: `useContrast()` — `{ contrast, toggleContrast }`
-- Produces: Contrast toggle button next to theme toggle button in `SidebarFooter`
+- Consumes: `<Mermaid chart={string} />`
+- Produces: `MarkdownViewer` component that renders `Mermaid` for `language-mermaid` code blocks
 
-- [ ] **Step 1: Update SidebarFooter with contrast toggle button**
+- [ ] **Step 1: Update MarkdownViewer.js to intercept language-mermaid code blocks**
 
-Replace `src/components/Sidebar/SidebarFooter.js`:
+Update `src/components/MainContent/MarkdownViewer.js`:
 
 ```jsx
 'use client';
 
-import styles from './SidebarFooter.module.css';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import TableOfContents from './TableOfContents';
+import Mermaid from './Mermaid';
+import styles from './MarkdownViewer.module.css';
+import 'highlight.js/styles/github.css';
 
-export default function SidebarFooter({
-  theme,
-  onToggleTheme,
-  contrast,
-  onToggleContrast,
-  onClearAll,
-  hasFiles,
-}) {
+export default function MarkdownViewer({ file }) {
   return (
-    <div className={styles.footer} data-hide-print="true">
-      {hasFiles && (
-        <button
-          className={styles.clearBtn}
-          onClick={onClearAll}
-          aria-label="Limpar todos os arquivos"
+    <div className={styles.viewer}>
+      <h1 className={styles.fileName}>{file.name.replace(/\.md$/, '')}</h1>
+      <TableOfContents content={file.content} />
+      <div className={styles.markdown}>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeHighlight]}
+          components={{
+            h1: ({ children, ...props }) => {
+              const id = String(children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+              return <h1 id={id} {...props}>{children}</h1>;
+            },
+            h2: ({ children, ...props }) => {
+              const id = String(children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+              return <h2 id={id} {...props}>{children}</h2>;
+            },
+            h3: ({ children, ...props }) => {
+              const id = String(children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+              return <h3 id={id} {...props}>{children}</h3>;
+            },
+            h4: ({ children, ...props }) => {
+              const id = String(children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+              return <h4 id={id} {...props}>{children}</h4>;
+            },
+            h5: ({ children, ...props }) => {
+              const id = String(children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+              return <h5 id={id} {...props}>{children}</h5>;
+            },
+            h6: ({ children, ...props }) => {
+              const id = String(children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+              return <h6 id={id} {...props}>{children}</h6>;
+            },
+            a: ({ children, href, ...props }) => (
+              <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+                {children}
+              </a>
+            ),
+            code: ({ node, inline, className, children, ...props }) => {
+              const match = /language-(\w+)/.exec(className || '');
+              if (!inline && match && match[1] === 'mermaid') {
+                return <Mermaid chart={String(children).replace(/\n$/, '')} />;
+              }
+              return (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              );
+            },
+          }}
         >
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 4h12M5 4V3a1 1 0 011-1h4a1 1 0 011 1v1M6 7v5M10 7v5M3 4l1 10a1 1 0 001 1h6a1 1 0 001-1l1-10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          </svg>
-          Limpar tudo
-        </button>
-      )}
-      <div className={styles.toggles}>
-        <button
-          className={`${styles.iconBtn} ${contrast === 'high' ? styles.active : ''}`}
-          onClick={onToggleContrast}
-          aria-label={contrast === 'high' ? 'Modo contraste normal' : 'Modo alto contraste'}
-          title={contrast === 'high' ? 'Alto contraste: Ativado' : 'Ativar alto contraste'}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2"/>
-            <path d="M8 1.5v13a6.5 6.5 0 000-13z" fill="currentColor"/>
-          </svg>
-        </button>
-        <button
-          className={styles.iconBtn}
-          onClick={onToggleTheme}
-          aria-label={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
-          title={theme === 'light' ? 'Modo claro' : 'Modo escuro'}
-        >
-          {theme === 'light' ? (
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 1v1M8 14v1M1 8h1M14 8h1M3.05 3.05l.7.7M12.25 12.25l.7.7M3.05 12.95l.7-.7M12.25 3.75l.7-.7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.2"/>
-            </svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M13.5 9.5A5.5 5.5 0 116.5 2.5a4.5 4.5 0 007 7z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-            </svg>
-          )}
-        </button>
+          {file.content}
+        </ReactMarkdown>
       </div>
     </div>
   );
 }
 ```
 
-- [ ] **Step 2: Update SidebarFooter.module.css for toggle group**
-
-Update `src/components/Sidebar/SidebarFooter.module.css`:
-
-```css
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-top: 1px solid var(--border-color);
-}
-
-.clearBtn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 12px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
-}
-
-.clearBtn:hover {
-  color: #E03E3E;
-  background: rgba(224, 62, 62, 0.08);
-}
-
-.toggles {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.iconBtn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 6px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-  min-width: 32px;
-  min-height: 32px;
-}
-
-.iconBtn:hover {
-  background: var(--hover-bg);
-  color: var(--text-primary);
-}
-
-.active {
-  color: var(--accent);
-  background: var(--accent-bg);
-}
-```
-
-- [ ] **Step 3: Update Sidebar.js to pass contrast props**
-
-Update `src/components/Sidebar/Sidebar.js` to accept `contrast` and `onToggleContrast` and pass them to `SidebarFooter`.
-
-- [ ] **Step 4: Verify build**
+- [ ] **Step 2: Run build to verify production compilation**
 
 ```bash
 npm run build
 ```
 
-- [ ] **Step 5: Commit**
+Expected: Production build succeeds with 0 errors.
+
+- [ ] **Step 3: Commit and push**
 
 ```bash
-git add -A; git commit -m "feat: add contrast toggle button to SidebarFooter"
+git add -A; git commit -m "feat: integrate Mermaid diagram rendering into MarkdownViewer"
+git push origin main
 ```
 
----
+Expected: All changes pushed to `https://github.com/WeslleyMouraDev/mdview.git`.

@@ -1,0 +1,40 @@
+.diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2em 0;
+  padding: 16px;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  transition: background var(--transition-normal), border-color var(--transition-normal);
+}
+
+.diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.errorContainer {
+  margin: 1.5em 0;
+  padding: 16px;
+  border: 1px solid #E03E3E;
+  border-radius: var(--radius-md);
+  background: rgba(224, 62, 62, 0.06);
+}
+
+.errorTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #E03E3E;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.errorText {
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
