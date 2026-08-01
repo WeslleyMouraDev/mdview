@@ -1,208 +1,158 @@
-### Task 2: Database & File Management Hook
+### Task 2: Contrast Toggle Buttons in Sidebar & Header
 
 **Files:**
-- Create: `src/lib/db.js`
-- Create: `src/hooks/useFiles.js`
+- Modify: `src/components/Sidebar/SidebarFooter.js`
+- Modify: `src/components/Sidebar/SidebarFooter.module.css`
+- Modify: `src/components/Sidebar/Sidebar.js`
 
 **Interfaces:**
-- Consumes: nothing
-- Produces:
-  - `db` — Dexie database instance with `files` table (`{ id, name, content, size, uploadedAt }`)
-  - `useFiles()` — hook returning `{ files, selectedFile, selectFile(id), addFiles(fileList), removeFile(id), clearAll(), sortBy, setSortBy }`
+- Consumes: `useContrast()` — `{ contrast, toggleContrast }`
+- Produces: Contrast toggle button next to theme toggle button in `SidebarFooter`
 
-- [ ] **Step 1: Create Dexie database**
+- [ ] **Step 1: Update SidebarFooter with contrast toggle button**
 
-Create `src/lib/db.js`:
+Replace `src/components/Sidebar/SidebarFooter.js`:
 
-```js
-import Dexie from 'dexie';
-
-const db = new Dexie('MDViewDB');
-
-db.version(1).stores({
-  files: '++id, name, uploadedAt',
-});
-
-export default db;
-```
-
-- [ ] **Step 2: Create useFiles hook**
-
-Create `src/hooks/useFiles.js`:
-
-```js
+```jsx
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import db from '@/lib/db';
+import styles from './SidebarFooter.module.css';
 
-export default function useFiles() {
-  const [files, setFiles] = useState([]);
-  const [selectedFileId, setSelectedFileId] = useState(null);
-  const [sortBy, setSortBy] = useState('name'); // 'name' | 'uploadedAt'
-  const [dbAvailable, setDbAvailable] = useState(true);
-
-  // Load files from IndexedDB on mount
-  useEffect(() => {
-    async function loadFiles() {
-      try {
-        const stored = await db.files.toArray();
-        setFiles(stored);
-        if (stored.length > 0 && !selectedFileId) {
-          setSelectedFileId(stored[0].id);
-        }
-      } catch {
-        setDbAvailable(false);
-      }
-    }
-    loadFiles();
-  }, []);
-
-  // Sort files when sortBy changes
-  const sortedFiles = [...files].sort((a, b) => {
-    if (sortBy === 'name') return a.name.localeCompare(b.name);
-    return new Date(b.uploadedAt) - new Date(a.uploadedAt);
-  });
-
-  const selectedFile = files.find((f) => f.id === selectedFileId) || null;
-
-  const addFiles = useCallback(
-    async (fileList) => {
-      const newFiles = [];
-      const duplicates = [];
-
-      for (const file of fileList) {
-        if (!file.name.endsWith('.md')) continue;
-
-        const content = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => reject(reader.error);
-          reader.readAsText(file);
-        });
-
-        const existing = files.find((f) => f.name === file.name);
-        if (existing) {
-          duplicates.push({ existing, name: file.name, content, size: file.size });
-        } else {
-          newFiles.push({
-            name: file.name,
-            content,
-            size: file.size,
-            uploadedAt: new Date(),
-          });
-        }
-      }
-
-      if (newFiles.length > 0) {
-        try {
-          const ids = await db.files.bulkAdd(newFiles, { allKeys: true });
-          const withIds = newFiles.map((f, i) => ({ ...f, id: ids[i] }));
-          setFiles((prev) => [...prev, ...withIds]);
-          if (!selectedFileId && withIds.length > 0) {
-            setSelectedFileId(withIds[0].id);
-          }
-        } catch {
-          // Fallback: in-memory only
-          const withIds = newFiles.map((f, i) => ({
-            ...f,
-            id: Date.now() + i,
-          }));
-          setFiles((prev) => [...prev, ...withIds]);
-          if (!selectedFileId && withIds.length > 0) {
-            setSelectedFileId(withIds[0].id);
-          }
-        }
-      }
-
-      return { added: newFiles.length, duplicates };
-    },
-    [files, selectedFileId]
+export default function SidebarFooter({
+  theme,
+  onToggleTheme,
+  contrast,
+  onToggleContrast,
+  onClearAll,
+  hasFiles,
+}) {
+  return (
+    <div className={styles.footer} data-hide-print="true">
+      {hasFiles && (
+        <button
+          className={styles.clearBtn}
+          onClick={onClearAll}
+          aria-label="Limpar todos os arquivos"
+        >
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 4h12M5 4V3a1 1 0 011-1h4a1 1 0 011 1v1M6 7v5M10 7v5M3 4l1 10a1 1 0 001 1h6a1 1 0 001-1l1-10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          </svg>
+          Limpar tudo
+        </button>
+      )}
+      <div className={styles.toggles}>
+        <button
+          className={`${styles.iconBtn} ${contrast === 'high' ? styles.active : ''}`}
+          onClick={onToggleContrast}
+          aria-label={contrast === 'high' ? 'Modo contraste normal' : 'Modo alto contraste'}
+          title={contrast === 'high' ? 'Alto contraste: Ativado' : 'Ativar alto contraste'}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2"/>
+            <path d="M8 1.5v13a6.5 6.5 0 000-13z" fill="currentColor"/>
+          </svg>
+        </button>
+        <button
+          className={styles.iconBtn}
+          onClick={onToggleTheme}
+          aria-label={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
+          title={theme === 'light' ? 'Modo claro' : 'Modo escuro'}
+        >
+          {theme === 'light' ? (
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 1v1M8 14v1M1 8h1M14 8h1M3.05 3.05l.7.7M12.25 12.25l.7.7M3.05 12.95l.7-.7M12.25 3.75l.7-.7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+              <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.2"/>
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13.5 9.5A5.5 5.5 0 116.5 2.5a4.5 4.5 0 007 7z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+            </svg>
+          )}
+        </button>
+      </div>
+    </div>
   );
-
-  const replaceDuplicate = useCallback(
-    async (name, content, size) => {
-      const existing = files.find((f) => f.name === name);
-      if (!existing) return;
-
-      const updated = { ...existing, content, size, uploadedAt: new Date() };
-      try {
-        await db.files.update(existing.id, {
-          content,
-          size,
-          uploadedAt: updated.uploadedAt,
-        });
-      } catch {
-        // in-memory only
-      }
-      setFiles((prev) =>
-        prev.map((f) => (f.id === existing.id ? updated : f))
-      );
-    },
-    [files]
-  );
-
-  const removeFile = useCallback(
-    async (id) => {
-      try {
-        await db.files.delete(id);
-      } catch {
-        // in-memory only
-      }
-      setFiles((prev) => prev.filter((f) => f.id !== id));
-      if (selectedFileId === id) {
-        setSelectedFileId((prev) => {
-          const remaining = files.filter((f) => f.id !== id);
-          return remaining.length > 0 ? remaining[0].id : null;
-        });
-      }
-    },
-    [files, selectedFileId]
-  );
-
-  const clearAll = useCallback(async () => {
-    try {
-      await db.files.clear();
-    } catch {
-      // in-memory only
-    }
-    setFiles([]);
-    setSelectedFileId(null);
-  }, []);
-
-  const selectFile = useCallback((id) => {
-    setSelectedFileId(id);
-  }, []);
-
-  const getTotalSize = useCallback(() => {
-    return files.reduce((sum, f) => sum + f.size, 0);
-  }, [files]);
-
-  return {
-    files: sortedFiles,
-    selectedFile,
-    selectedFileId,
-    selectFile,
-    addFiles,
-    replaceDuplicate,
-    removeFile,
-    clearAll,
-    sortBy,
-    setSortBy,
-    dbAvailable,
-    getTotalSize,
-  };
 }
 ```
 
-- [ ] **Step 3: Verify hook loads without errors**
+- [ ] **Step 2: Update SidebarFooter.module.css for toggle group**
 
-Import `useFiles` in `page.js` temporarily, add `const { files } = useFiles();` and `console.log('files:', files)`. Run `npm run dev`, open browser console. Expected: `files: []` logged, no errors.
+Update `src/components/Sidebar/SidebarFooter.module.css`:
 
-- [ ] **Step 4: Commit**
+```css
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.clearBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.clearBtn:hover {
+  color: #E03E3E;
+  background: rgba(224, 62, 62, 0.08);
+}
+
+.toggles {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.iconBtn:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.active {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+```
+
+- [ ] **Step 3: Update Sidebar.js to pass contrast props**
+
+Update `src/components/Sidebar/Sidebar.js` to accept `contrast` and `onToggleContrast` and pass them to `SidebarFooter`.
+
+- [ ] **Step 4: Verify build**
 
 ```bash
-git add -A; git commit -m "feat: Dexie database and useFiles hook for file management"
+npm run build
+```
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add -A; git commit -m "feat: add contrast toggle button to SidebarFooter"
 ```
 
 ---
