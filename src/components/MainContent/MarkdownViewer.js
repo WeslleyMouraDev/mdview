@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import TableOfContents from './TableOfContents';
+import Mermaid from './Mermaid';
 import styles from './MarkdownViewer.module.css';
 import 'highlight.js/styles/github.css';
 
@@ -46,6 +47,17 @@ export default function MarkdownViewer({ file }) {
                 {children}
               </a>
             ),
+            code: ({ node, inline, className, children, ...props }) => {
+              const match = /language-(\w+)/.exec(className || '');
+              if (!inline && match && match[1] === 'mermaid') {
+                return <Mermaid chart={String(children).replace(/\n$/, '')} />;
+              }
+              return (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              );
+            },
           }}
         >
           {file.content}
