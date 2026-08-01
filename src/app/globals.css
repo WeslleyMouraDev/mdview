@@ -106,13 +106,33 @@ body {
 
 /* ---------- Print Styles ---------- */
 @media print {
+  html,
   body {
-    background: white;
-    color: black;
+    height: auto !important;
+    overflow: visible !important;
+    background: white !important;
+    color: black !important;
   }
 
-  [data-hide-print="true"] {
+  /* Hide UI elements from print */
+  [data-hide-print="true"],
+  aside,
+  header,
+  nav {
     display: none !important;
+  }
+
+  /* Reset viewer container to allow continuous multi-page PDF generation */
+  [data-markdown-viewer] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 }
 
