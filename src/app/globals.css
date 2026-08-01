@@ -23,7 +23,8 @@
   --accent-hover: #2496C4;
   --accent-bg: rgba(46, 170, 220, 0.08);
   --hover-bg: rgba(55, 53, 47, 0.04);
-  --code-bg: #F7F6F3;
+  --code-bg: #F6F8FA;
+  --code-text: #24292E;
   --blockquote-bg: #F7F6F3;
   --toast-bg: #37352F;
   --toast-text: #FFFFFF;
@@ -50,7 +51,8 @@
   --accent-hover: #6BB3D9;
   --accent-bg: rgba(82, 156, 202, 0.12);
   --hover-bg: rgba(255, 255, 255, 0.04);
-  --code-bg: #2F2F2F;
+  --code-bg: #1F242C;
+  --code-text: #E6EDF3;
   --blockquote-bg: #202020;
   --toast-bg: #E8E5E0;
   --toast-text: #191919;
@@ -69,6 +71,7 @@
   --blockquote-bg: #FEF3C7;
   --blockquote-border: #D97706;
   --code-bg: #F1F5F9;
+  --code-text: #1F2328;
   --border-color: #CBD5E1;
   --text-primary: #242424;
 }
@@ -85,7 +88,8 @@
   --link-color: #67E8F9;
   --blockquote-bg: #1A1D24;
   --blockquote-border: #FDE68A;
-  --code-bg: #1E2430;
+  --code-bg: #1A1E26;
+  --code-text: #F0EFEA;
 }
 
 /* ---------- Global Styles ---------- */
@@ -158,4 +162,52 @@ body {
 ::selection {
   background: var(--accent-bg);
   color: var(--text-primary);
+}
+
+/* ---------- Code Blocks & Syntax Highlighting Theme Fixes ---------- */
+.hljs,
+code.hljs,
+pre code {
+  color: var(--code-text) !important;
+  background-color: var(--code-bg) !important;
+}
+
+[data-theme="dark"] .hljs-comment,
+[data-theme="dark"] .hljs-quote {
+  color: #8B949E !important;
+  font-style: italic;
+}
+
+[data-theme="dark"] .hljs-keyword,
+[data-theme="dark"] .hljs-selector-tag,
+[data-theme="dark"] .hljs-subst {
+  color: #FF7B72 !important;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .hljs-string,
+[data-theme="dark"] .hljs-title,
+[data-theme="dark"] .hljs-section,
+[data-theme="dark"] .hljs-attribute,
+[data-theme="dark"] .hljs-literal,
+[data-theme="dark"] .hljs-template-tag,
+[data-theme="dark"] .hljs-template-variable,
+[data-theme="dark"] .hljs-type,
+[data-theme="dark"] .hljs-addition {
+  color: #A5D6FF !important;
+}
+
+[data-theme="dark"] .hljs-variable,
+[data-theme="dark"] .hljs-attr,
+[data-theme="dark"] .hljs-symbol,
+[data-theme="dark"] .hljs-bullet,
+[data-theme="dark"] .hljs-built_in,
+[data-theme="dark"] .hljs-link {
+  color: #79C0FF !important;
+}
+
+[data-theme="dark"] .hljs-number,
+[data-theme="dark"] .hljs-meta,
+[data-theme="dark"] .hljs-tag {
+  color: #D2A8FF !important;
 }
