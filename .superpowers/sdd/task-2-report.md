@@ -1,20 +1,15 @@
-# Task 2 Report: Database & File Management Hook
+# Task 2 Report: Contrast Toggle Buttons in Sidebar & Header
 
-## Task Details
-- **Task:** Task 2 — Database & File Management Hook
-- **Status:** DONE
-- **Created Files:**
-  - `src/lib/db.js` — Dexie IndexedDB database instance (`MDViewDB`) with `files` table (`++id, name, uploadedAt`).
-  - `src/hooks/useFiles.js` — React custom hook managing state, CRUD operations (`addFiles`, `replaceDuplicate`, `removeFile`, `clearAll`), sorting (`name` | `uploadedAt`), selection (`selectedFile`, `selectFile`), database availability fallback, and size calculation (`getTotalSize`).
-- **Modified Files:**
-  - `src/app/page.js` — Verified hook instantiation and state access.
+## Status
+DONE
+
+## Summary of Changes
+1. **`src/components/Sidebar/SidebarFooter.js`**: Added high-contrast toggle button using an SVG half-moon icon beside the theme toggle button. Added `contrast` and `onToggleContrast` props. Updated aria-label and title dynamically based on contrast state.
+2. **`src/components/Sidebar/SidebarFooter.module.css`**: Created `.toggles` container class with flex layout and spacing. Created `.iconBtn` and `.active` CSS rules for styling contrast toggle state with accent colors.
+3. **`src/components/Sidebar/Sidebar.js`**: Updated `Sidebar` component to accept `contrast` and `onToggleContrast` props and pass them down to `SidebarFooter`.
 
 ## Verification
-- Built application with `npm run build`: Compiled successfully without errors or warnings.
-- Hook API verified: Exposes `files`, `selectedFile`, `selectedFileId`, `selectFile`, `addFiles`, `replaceDuplicate`, `removeFile`, `clearAll`, `sortBy`, `setSortBy`, `dbAvailable`, `getTotalSize`.
+- Ran `npm run build` — compiled successfully with zero errors or TypeScript issues.
 
 ## Commits
-- Commit message: `feat: Dexie database and useFiles hook for file management`
-
-## Concerns / Notes
-- None. Dexie fallback handles environments without IndexedDB gracefully by maintaining state in memory.
+- `17da467`: feat: add contrast toggle button to SidebarFooter
