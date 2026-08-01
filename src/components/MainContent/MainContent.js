@@ -3,8 +3,6 @@
 import { useEffect, useRef } from 'react';
 import EmptyState from './EmptyState';
 import MarkdownViewer from './MarkdownViewer';
-import ExportBar from './ExportBar';
-import exportHtml from '@/lib/exportHtml';
 import styles from './MainContent.module.css';
 
 export default function MainContent({ selectedFile, onAddFiles }) {
@@ -32,7 +30,6 @@ export default function MainContent({ selectedFile, onAddFiles }) {
       <div className={styles.fade} data-markdown-viewer>
         <MarkdownViewer file={selectedFile} />
       </div>
-      <ExportBar file={selectedFile} onExportHtml={exportHtml} />
     </div>
   );
 }
