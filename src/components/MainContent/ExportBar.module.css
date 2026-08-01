@@ -29,8 +29,14 @@
   font-family: inherit;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background: var(--accent-bg);
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
