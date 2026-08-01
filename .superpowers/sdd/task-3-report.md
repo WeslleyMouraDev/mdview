@@ -1,17 +1,32 @@
-# Task 3 Report: Theme System
+# Task 3 Report: Floating Controls Component (Back to Top & TOC Popover)
 
-## Task Details
-- **Task:** Task 3 — Theme System
+## Execution Summary
+
 - **Status:** DONE
-- **Created Files:**
-  - `src/hooks/useTheme.js` — Custom React hook managing light/dark theme state with `localStorage` persistence (`mdview-theme`) and updates to `data-theme` attribute on `document.documentElement`.
+- **Files Created:**
+  - `src/components/FloatingControls/FloatingControls.js`
+  - `src/components/FloatingControls/FloatingControls.module.css`
+- **Build Status:** Next.js build completed cleanly without errors (`npm run build`).
+- **Commits Created:**
+  - `8a85673` feat: FloatingControls component with Back-to-Top and TOC Popover
 
-## Verification
-- Built application with `npm run build`: Compiled successfully with Next.js Turbopack compiler.
-- Verified hook interface: `useTheme` exports `{ theme, toggleTheme }` supporting `'light'` and `'dark'` modes with default fallback to `'light'`.
+## Verification Details
 
-## Commits
-- `144adf09f5742460e443128fbbade01555edd53a`: `feat: theme toggle hook with localStorage persistence`
+1. **FloatingControls Component:**
+   - Client Component (`'use client'`).
+   - Uses `extractHeadings(content)` to dynamic headings extraction.
+   - Listens to `window` scroll event (passive listener) to toggle Back to Top button when `scrollY > 300`.
+   - Popover toggle for document Table of Contents with indentation based on heading levels (`h.level - minLevel`).
+   - Smooth scroll on click to document heading IDs or top.
+   - Includes `data-hide-print="true"` attribute to ensure floating controls hide during print/PDF export.
 
-## Concerns / Notes
+2. **CSS Module:**
+   - Positioned fixed at bottom-right (`bottom: 24px`, `right: 24px` on desktop, responsive adjust `20px`/`16px` on mobile).
+   - Utilizes design system CSS variables (`--bg-primary`, `--border-color`, `--shadow-md`, `--shadow-lg`, `--accent`, etc.).
+
+3. **Build & Quality Check:**
+   - Next.js Turbopack build succeeded with 0 errors/warnings.
+
+## Concerns
+
 - None.

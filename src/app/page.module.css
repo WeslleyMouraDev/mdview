@@ -22,19 +22,12 @@
   transition: background-color var(--transition-normal);
 }
 
+.mobileHeader {
+  display: none;
+}
+
 .hamburger {
   display: none;
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  z-index: 101;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 8px;
-  color: var(--text-primary);
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
 }
 
 .overlay {
@@ -80,8 +73,77 @@
 
 /* Mobile responsive */
 @media (max-width: 768px) {
+  .mobileHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 8px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 95;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+  }
+
   .hamburger {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    box-shadow: none;
+    transition: background-color var(--transition-fast);
+  }
+
+  .hamburger:hover,
+  .mobileIconBtn:hover {
+    background: var(--hover-bg);
+  }
+
+  .mobileTitle {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 8px;
+  }
+
+  .mobileActions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mobileIconBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .activeContrast {
+    color: var(--accent);
   }
 
   .sidebar {
@@ -105,4 +167,9 @@
     background: var(--modal-overlay);
     z-index: 99;
   }
+
+  .main {
+    padding-top: 56px;
+  }
 }
+

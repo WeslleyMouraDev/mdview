@@ -3,9 +3,11 @@
 import { useState, useCallback } from 'react';
 import useFiles from '@/hooks/useFiles';
 import useTheme from '@/hooks/useTheme';
+import useContrast from '@/hooks/useContrast';
 import useDragDrop from '@/hooks/useDragDrop';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import MainContent from '@/components/MainContent/MainContent';
+import FloatingControls from '@/components/FloatingControls/FloatingControls';
 import Toast from '@/components/Toast/Toast';
 import Modal from '@/components/Modal/Modal';
 import styles from './page.module.css';
@@ -27,6 +29,7 @@ export default function Home() {
   } = useFiles();
 
   const { theme, toggleTheme } = useTheme();
+  const { contrast, toggleContrast } = useContrast();
 
   const [toast, setToast] = useState(null);
   const [modal, setModal] = useState(null);
@@ -102,21 +105,62 @@ export default function Home() {
     });
   }, [clearAll, showToast]);
 
+  const handleMobileTocClick = useCallback(() => {
+    const tocElement = document.querySelector('nav[aria-label="Índice"]');
+    if (tocElement) {
+      tocElement.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, []);
+
   const { isDragging } = useDragDrop(handleAddFiles);
 
   return (
     <div className={styles.container}>
-      {/* Mobile hamburger */}
-      <button
-        className={styles.hamburger}
-        onClick={() => setSidebarOpen((v) => !v)}
-        aria-label="Abrir menu"
-        data-hide-print="true"
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-        </svg>
-      </button>
+      {/* Mobile Header Bar */}
+      <header className={styles.mobileHeader} data-hide-print="true">
+        <button
+          className={styles.hamburger}
+          onClick={() => setSidebarOpen((v) => !v)}
+          aria-label="Abrir menu"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </button>
+
+        <span className={styles.mobileTitle}>
+          {selectedFile ? selectedFile.name : 'MDView'}
+        </span>
+
+        <div className={styles.mobileActions}>
+          {selectedFile && (
+            <button
+              className={styles.mobileIconBtn}
+              onClick={handleMobileTocClick}
+              aria-label="Ir para o índice"
+              title="Índice"
+            >
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 3.5h12M2 8h8M2 12.5h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+          )}
+
+          <button
+            className={`${styles.mobileIconBtn} ${contrast === 'high' ? styles.activeContrast : ''}`}
+            onClick={toggleContrast}
+            aria-label={contrast === 'high' ? 'Modo contraste normal' : 'Modo alto contraste'}
+            title={contrast === 'high' ? 'Alto contraste: Ativado' : 'Ativar alto contraste'}
+          >
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2"/>
+              <path d="M8 1.5v13a6.5 6.5 0 000-13z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+      </header>
 
       {/* Sidebar */}
       <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
@@ -134,6 +178,8 @@ export default function Home() {
           onSortChange={setSortBy}
           theme={theme}
           onToggleTheme={toggleTheme}
+          contrast={contrast}
+          onToggleContrast={toggleContrast}
         />
       </aside>
 
@@ -149,6 +195,9 @@ export default function Home() {
       <main className={styles.main}>
         <MainContent selectedFile={selectedFile} onAddFiles={handleAddFiles} />
       </main>
+
+      {/* Floating controls */}
+      <FloatingControls content={selectedFile?.content} />
 
       {/* Drag-and-drop overlay */}
       {isDragging && (
@@ -194,3 +243,4 @@ export default function Home() {
     </div>
   );
 }
+
