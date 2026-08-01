@@ -1,0 +1,40 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  cursor: pointer;
+  padding: 40px;
+  transition: background var(--transition-fast);
+}
+
+.empty:hover {
+  background: var(--hover-bg);
+}
+
+.input {
+  display: none;
+}
+
+.iconWrapper {
+  color: var(--border-color);
+  margin-bottom: 20px;
+  transition: color var(--transition-normal);
+}
+
+.empty:hover .iconWrapper {
+  color: var(--accent);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}

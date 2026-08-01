@@ -1,0 +1,14 @@
+.content {
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.fade {
+  animation: fadeIn var(--transition-fast) ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
