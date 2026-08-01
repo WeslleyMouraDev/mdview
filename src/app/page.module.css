@@ -2,6 +2,7 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
+  position: relative;
 }
 
 .sidebar {
@@ -21,7 +22,68 @@
   transition: background-color var(--transition-normal);
 }
 
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 101;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.overlay {
+  display: none;
+}
+
+/* Drop overlay */
+.dropOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(46, 170, 220, 0.08);
+  backdrop-filter: blur(2px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 150ms ease-out;
+}
+
+.dropContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 500;
+  padding: 48px;
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius-lg);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Mobile responsive */
 @media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
   .sidebar {
     position: fixed;
     left: -100%;
@@ -29,10 +91,18 @@
     bottom: 0;
     z-index: 100;
     box-shadow: var(--shadow-lg);
-    transition: left var(--transition-normal);
+    transition: left var(--transition-normal), background-color var(--transition-normal);
   }
 
   .sidebarOpen {
     left: 0;
+  }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: var(--modal-overlay);
+    z-index: 99;
   }
 }
